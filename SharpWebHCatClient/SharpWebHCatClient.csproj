@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Models\Common\" />
     <Folder Include="Models\Common\DataTypes\" />
-    <Folder Include="Common\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="WebHCatAPIReference\Request\Databases\DeleteDatabaseParam.cs" />

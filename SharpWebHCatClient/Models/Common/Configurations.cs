@@ -23,110 +23,15 @@ namespace TamkeenCommon
         }
 
         public static Configurations Instance { get { return instance; } }
-        #region Source
-        public string BaseURL
-        {
-            get
-            {
-                return Functions.CheckPath(configuration.GetSection("SourceNessus").GetSection("BaseURL").Value);
-            }
-        }
+
         public string ApplictionType
         {
             get
             {
-                return configuration.GetSection("SourceNessus").GetSection("ApplictionType").Value;
+                return configuration.GetSection("WebHCat").GetSection("ApplictionType").Value;
             }
         }
-        public string Xapikeys
-        {
-            get
-            {
-                return configuration.GetSection("SourceNessus").GetSection("x-apikeys").Value;
-            }
-        }
-        public string HistoryFileCheckURL
-        {
-            get
-            {
-                return configuration.GetSection("SourceNessus").GetSection("HistoryFileCheckURL").Value;
-            }
-        }
-        public string HistoryFileDownloadFormat
-        {
-            get
-            {
-                return configuration.GetSection("SourceNessus").GetSection("HistoryFileDownloadFormat").Value;
-            }
-        }
-        public string HistoryFileStatusURL
-        {
-            get
-            {
-                return Functions.CheckPath(configuration.GetSection("SourceNessus").GetSection("HistoryFileStatusURL").Value);
-            }
-        }
-        public string HistoryFileSaveURL
-        {
-            get
-            {
-                return Functions.CheckPath(configuration.GetSection("SourceNessus").GetSection("HistoryFileSaveURL").Value);
-            }
-        }
-        public string FoldersPath
-        {
-            get
-            {
-                return Functions.CheckPath(configuration.GetSection("SourceNessus").GetSection("FoldersPath").Value);
-            }
-        }
-        public string ScanPth
-        {
-            get
-            {
-                return configuration.GetSection("SourceNessus").GetSection("ScanPth").Value;
-            }
-        }
-        public string ScanDetailsPath
-        {
-            get
-            {
-                return configuration.GetSection("SourceNessus").GetSection("ScanDetailsPath").Value;
-            }
-        }
-        public string SourceSplitRegExForCommaDelimiter
-        {
-            get
-            {
-                return configuration.GetSection("SourceNessus").GetSection("SplitRegExForCommaDelimiter").Value;
-            }
-        }
-        public string SourceSplitRegExForNewLine
-        {
-            get
-            {
-                return configuration.GetSection("SourceNessus").GetSection("SplitRegExForNewLine").Value;
-            }
-        }
-        #endregion
 
-        #region Export
-        public string ExportSaveLocation
-        {
-            get
-            {
-                return Functions.CheckPath(configuration.GetSection("Export").GetSection("SaveLocation").Value);
-            }
-        }
-        public string ExportCSVDelimiter
-        {
-            get
-            {
-                return configuration.GetSection("Export").GetSection("CSVDelimiter").Value;
-            }
-        }
-        #endregion
-        #region WebHCat
         public string WebHCatURLVersion
         {
             get
@@ -150,7 +55,5 @@ namespace TamkeenCommon
                 return configuration.GetSection("WebHCat").GetSection("UserName").Value;
             }
         }
-
-        #endregion
     }
 }

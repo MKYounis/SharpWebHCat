@@ -2,6 +2,7 @@
   "WebHCat": {
     "BaseURL": "http://webhcat:50111",
     "Version": "v1",
-    "UserName": "hive"
+    "UserName": "hive",
+    "ApplictionType": "application/json"
   }
 }
