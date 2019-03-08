@@ -1,0 +1,25 @@
+{
+  "SourceNessus": {
+    "BaseURL": "https://10.4.9.12:8834",
+    "FoldersPath": "{0}/folders",
+    "ScanPth": "{0}/scans?folder_id={1}",
+    "ScanDetailsPath": "{0}/scans/{1}",
+    "ApplictionType": "application/json",
+    "x-apikeys": "accessKey=456f271e74e67205c2fd87153419ba21219d14f23c8942d693f81fe81973dad1; secretKey=a4fd4c1da6c72eb0d78bc7ac8f980f0951d81510e9740b12264d847763c00cb9",
+    "HistoryFileCheckURL": "https://10.4.9.12:8834/scans/{0}/export?history_id={1}",
+    "HistoryFileDownloadFormat": "nessus",
+    "HistoryFileStatusURL": "https://10.4.9.12:8834/scans/{0}/export/{1}/status",
+    "HistoryFileSaveURL": "https://10.4.9.12:8834/scans/{0}/export/{1}/download",
+    "SplitRegExForCommaDelimiter": ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)",
+    "SplitRegExForNewLine": "@\"(?s)(?=(?:(?:[^\"\"]*?\"\"){2})*?[^\"\"]*?$)\\n\""
+  },
+  "Export": {
+    "SaveLocation": "/tmp/Nessus",
+    "CSVDelimiter": ","
+  },
+  "WebHCat": {
+    "BaseURL": "http://nosql.tamkeen.bi:50111",
+    "Version": "v1",
+    "UserName": "hive"
+  }
+}
