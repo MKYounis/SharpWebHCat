@@ -15,20 +15,11 @@ namespace SharpWebHCatClientTest
 {
     class Program
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(Program));
         private static WebHCatRequestsManager hManager = new WebHCatRequestsManager("http://webhcat:50111", "v1", "hive");
 
         static void Main(string[] args)
         {
-            XmlDocument log4netConfig = new XmlDocument();
-            log4netConfig.Load(File.OpenRead("log4net.config"));
 
-            var repo = log4net.LogManager.CreateRepository(
-                Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
-
-            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
-
-            log.Info("Application - Main is invoked");
 
         }
 
@@ -36,7 +27,7 @@ namespace SharpWebHCatClientTest
         {
            
             WebHCatStatus status = await hManager.GetConnectionStatus();
-            log.Info(string.Format("WebHCat Version: {0}, status: {1}", status.version, status.status));
+            Console.WriteLine(string.Format("WebHCat Version: {0}, status: {1}", status.version, status.status));
         }
         public async void MapReduceJobTest()
         {
@@ -52,7 +43,7 @@ namespace SharpWebHCatClientTest
                 string.Empty,
                 string.Empty
             );
-            log.Info(job.ToString());
+            Console.WriteLine(job.ToString());
         }
 
         public async void MapReduceStreamingJobTest()
@@ -71,15 +62,15 @@ namespace SharpWebHCatClientTest
                 string.Empty
             );
 
-            log.Info(job.ToString());
+            Console.WriteLine(job.ToString());
             TableProperty createProperty = await hManager.CreateTableProperty("testing", "table1", "animal", new PropertyValue() { value = "cat" });
             if (string.IsNullOrEmpty(createProperty.error))
             {
-                log.Info(string.Format("Column {0}.{1}.{2} has been created", createProperty.database, createProperty.table, "animal"));
+                Console.WriteLine(string.Format("Column {0}.{1}.{2} has been created", createProperty.database, createProperty.table, "animal"));
             }
             else
             {
-                log.Info(((Error)createProperty).ToString());
+                Console.WriteLine(((Error)createProperty).ToString());
             }
         }
 
@@ -88,12 +79,12 @@ namespace SharpWebHCatClientTest
             TableProperties tableProperties = await hManager.ListTableProperties("testing", "table1");
             if (string.IsNullOrEmpty(tableProperties.error))
             {
-                log.Info(string.Format("table {0}.{1} properties:\n{2}", tableProperties.database, tableProperties.table, tableProperties.properties));
+                Console.WriteLine(string.Format("table {0}.{1} properties:\n{2}", tableProperties.database, tableProperties.table, tableProperties.properties));
 
             }
             else
             {
-                log.Info(((Error)tableProperties).ToString());
+                Console.WriteLine(((Error)tableProperties).ToString());
             }
         }
 
@@ -108,11 +99,11 @@ namespace SharpWebHCatClientTest
             TableColumnDDL createColumn = await hManager.CreateTableColumn("testing", "table1", column);
             if (string.IsNullOrEmpty(createColumn.error))
             {
-                log.Info(string.Format("Column {0}.{1}.{2} has been created", createColumn.database, createColumn.table, createColumn.column));
+                Console.WriteLine(string.Format("Column {0}.{1}.{2} has been created", createColumn.database, createColumn.table, createColumn.column));
             }
             else
             {
-                log.Info(((Error)createColumn).ToString());
+                Console.WriteLine(((Error)createColumn).ToString());
             }
         }
 
@@ -121,26 +112,26 @@ namespace SharpWebHCatClientTest
             TableColumnsList tableColumnsList = await hManager.ListTableColumns("testing", "table1");
             if (string.IsNullOrEmpty(tableColumnsList.error))
             {
-                log.Info(string.Format("table {0}.{1} columns:", tableColumnsList.database, tableColumnsList.table));
+                Console.WriteLine(string.Format("table {0}.{1} columns:", tableColumnsList.database, tableColumnsList.table));
                 tableColumnsList.columns.ForEach(c =>
                 {
-                    log.Info(string.Format("{0}({1}) => {2}", c.name, c.type, c.comment));
+                    Console.WriteLine(string.Format("{0}({1}) => {2}", c.name, c.type, c.comment));
                     Task<ColumnDescribe> describeTableColumnTask = hManager.DescribeTableColumn(tableColumnsList.database, tableColumnsList.table, c.name);
                     Task.WaitAll(describeTableColumnTask);
                     var describeColumn = describeTableColumnTask.GetAwaiter().GetResult();
                     if (string.IsNullOrEmpty(describeColumn.error))
                     {
-                        log.Info(string.Format("{0}({1}) => {2}", describeColumn.column.name, describeColumn.column.type, describeColumn.column.comment));
+                        Console.WriteLine(string.Format("{0}({1}) => {2}", describeColumn.column.name, describeColumn.column.type, describeColumn.column.comment));
                     }
                     else
                     {
-                        log.Info(((Error)describeColumn).ToString());
+                        Console.WriteLine(((Error)describeColumn).ToString());
                     }
                 });
             }
             else
             {
-                log.Info(((Error)tableColumnsList).ToString());
+                Console.WriteLine(((Error)tableColumnsList).ToString());
             }
         }
 
@@ -149,11 +140,11 @@ namespace SharpWebHCatClientTest
             PartitionDDL createPartition = await hManager.CreateTablePartition("testing", "table1", "family_name='123'", true, string.Empty, null, null);
             if (string.IsNullOrEmpty(createPartition.error))
             {
-                log.Info(string.Format("Partition {0}.{1}.{2} has been created", createPartition.database, createPartition.table, createPartition.partition));
+                Console.WriteLine(string.Format("Partition {0}.{1}.{2} has been created", createPartition.database, createPartition.table, createPartition.partition));
             }
             else
             {
-                log.Info(((Error)createPartition).ToString());
+                Console.WriteLine(((Error)createPartition).ToString());
             }
         }
 
@@ -162,34 +153,34 @@ namespace SharpWebHCatClientTest
             TablePartitionsList tablePartitionsList = await hManager.ListTablePartitions("testing", "table1");
             if (string.IsNullOrEmpty(tablePartitionsList.error))
             {
-                log.Info(string.Format("table {0}.{1} partitions:", tablePartitionsList.database, tablePartitionsList.table));
+                Console.WriteLine(string.Format("table {0}.{1} partitions:", tablePartitionsList.database, tablePartitionsList.table));
                 tablePartitionsList.partitions.ForEach(p =>
                 {
-                    log.Info(string.Format("Partition {0}:", p.name));
-                    p.values.ForEach(v => log.Info(string.Format("Column: {0}, Value: {1}", v.columnName, v.columnValue)));
+                    Console.WriteLine(string.Format("Partition {0}:", p.name));
+                    p.values.ForEach(v => Console.WriteLine(string.Format("Column: {0}, Value: {1}", v.columnName, v.columnValue)));
                     Task<PartitionDescribe> describeTablePartitionTask = hManager.DescribeTablePartition(tablePartitionsList.database, tablePartitionsList.table, p.name);
                     Task.WaitAll(describeTablePartitionTask);
                     var describePartition = describeTablePartitionTask.GetAwaiter().GetResult();
                     if (string.IsNullOrEmpty(describePartition.error))
                     {
-                        log.Info(string.Format("Partition {0} Describe:", describePartition.partition));
-                        log.Info(string.Format("Partitioned: {0}", describePartition.partitioned));
-                        log.Info(string.Format("Output Format: {0}", describePartition.outputFormat));
-                        log.Info(string.Format("Input Format: {0}", describePartition.inputFormat));
+                        Console.WriteLine(string.Format("Partition {0} Describe:", describePartition.partition));
+                        Console.WriteLine(string.Format("Partitioned: {0}", describePartition.partitioned));
+                        Console.WriteLine(string.Format("Output Format: {0}", describePartition.outputFormat));
+                        Console.WriteLine(string.Format("Input Format: {0}", describePartition.inputFormat));
                         foreach (var column in describePartition.columns)
                         {
-                            log.Info(string.Format("Column Name: {0}, Column Type: {1}", column.name, column.type));
+                            Console.WriteLine(string.Format("Column Name: {0}, Column Type: {1}", column.name, column.type));
                         }
                     }
                     else
                     {
-                        log.Info(((Error)describePartition).ToString());
+                        Console.WriteLine(((Error)describePartition).ToString());
                     }
                 });
             }
             else
             {
-                log.Info(((Error)tablePartitionsList).ToString());
+                Console.WriteLine(((Error)tablePartitionsList).ToString());
             }
         }
 
@@ -198,11 +189,11 @@ namespace SharpWebHCatClientTest
             PartitionDDL deletePartition = await hManager.DeleteTablePartition("testing", "table1", "family_name='123'", true, null, null);
             if (string.IsNullOrEmpty(deletePartition.error))
             {
-                log.Info(string.Format("Partition {0}.{1}.{2} has been deleted", deletePartition.database, deletePartition.table, deletePartition.partition));
+                Console.WriteLine(string.Format("Partition {0}.{1}.{2} has been deleted", deletePartition.database, deletePartition.table, deletePartition.partition));
             }
             else
             {
-                log.Info(((Error)deletePartition).ToString());
+                Console.WriteLine(((Error)deletePartition).ToString());
             }
         }
 
@@ -211,11 +202,11 @@ namespace SharpWebHCatClientTest
             TableDDL createTableLike = await hManager.CreateTableLike("testing", "table1", "table3", true, "hdfs", "777");
             if (string.IsNullOrEmpty(createTableLike.error))
             {
-                log.Info(string.Format("table {0}.{1} has been creares", createTableLike.database, createTableLike.table));
+                Console.WriteLine(string.Format("table {0}.{1} has been creares", createTableLike.database, createTableLike.table));
             }
             else
             {
-                log.Info(((Error)createTableLike).ToString());
+                Console.WriteLine(((Error)createTableLike).ToString());
             }
         }
 
@@ -224,11 +215,11 @@ namespace SharpWebHCatClientTest
             TableDDL tableRename = await hManager.RenameTable("testing", "table1", "table2");
             if (string.IsNullOrEmpty(tableRename.error))
             {
-                log.Info(string.Format("table {0}.{1} has been renamed", tableRename.database, tableRename.table));
+                Console.WriteLine(string.Format("table {0}.{1} has been renamed", tableRename.database, tableRename.table));
             }
             else
             {
-                log.Info(((Error)tableRename).ToString());
+                Console.WriteLine(((Error)tableRename).ToString());
             }
         }
 
@@ -237,11 +228,11 @@ namespace SharpWebHCatClientTest
             TableDDL tableDelete = await hManager.DeleteTable("testing", "table1", false, string.Empty, string.Empty);
             if (string.IsNullOrEmpty(tableDelete.error))
             {
-                log.Info(string.Format("table {0}.{1} has been deleted", tableDelete.database, tableDelete.table));
+                Console.WriteLine(string.Format("table {0}.{1} has been deleted", tableDelete.database, tableDelete.table));
             }
             else
             {
-                log.Info(((Error)tableDelete).ToString());
+                Console.WriteLine(((Error)tableDelete).ToString());
             }
         }
 
@@ -282,11 +273,11 @@ namespace SharpWebHCatClientTest
             var t = await hManager.CreateTable("testing", "table1", table);
             if (string.IsNullOrEmpty(t.error))
             {
-                log.Info(string.Format("table {0}.{1} has been created", t.database, t.table));
+                Console.WriteLine(string.Format("table {0}.{1} has been created", t.database, t.table));
             }
             else
             {
-                log.Info(((ErrorCreateTable)t).ToString());
+                Console.WriteLine(((ErrorCreateTable)t).ToString());
             }
 
         }
@@ -296,11 +287,11 @@ namespace SharpWebHCatClientTest
             var result3 = await hManager.CreateDatabase("Testing", "just testing", null, null, null);
             if (string.IsNullOrEmpty(result3.error))
             {
-                log.Info(string.Format("Database {0} created.", result3.database));
+                Console.WriteLine(string.Format("Database {0} created.", result3.database));
             }
             else
             {
-                log.Info(result3.error);
+                Console.WriteLine(result3.error);
             }
         }
 
@@ -309,14 +300,14 @@ namespace SharpWebHCatClientTest
             var result2 = await hManager.GetDatabase("Testing");
             if (string.IsNullOrEmpty(result2.error))
             {
-                log.Info(result2.location);
-                log.Info(result2.@params);
-                log.Info(result2.comment);
-                log.Info(result2.database);
+                Console.WriteLine(result2.location);
+                Console.WriteLine(result2.@params);
+                Console.WriteLine(result2.comment);
+                Console.WriteLine(result2.database);
             }
             else
             {
-                log.Info(result2.error);
+                Console.WriteLine(result2.error);
             }
         }
 
@@ -326,11 +317,11 @@ namespace SharpWebHCatClientTest
             var delResult = await hManager.DeleteDatabase("delme6", true, null, null, null);
             if (string.IsNullOrEmpty(delResult.error))
             {
-                log.Info(string.Format("Database {0} deleted.", delResult.database));
+                Console.WriteLine(string.Format("Database {0} deleted.", delResult.database));
             }
             else
             {
-                log.Info(delResult.error);
+                Console.WriteLine(delResult.error);
             }
         }
 
@@ -339,15 +330,15 @@ namespace SharpWebHCatClientTest
             var result = await hManager.ListTables("test","*");
             if (string.IsNullOrEmpty(result.error))
             {
-                log.Info(string.Format("Database {0} tables:", result.database));
+                Console.WriteLine(string.Format("Database {0} tables:", result.database));
                 foreach (var item in result.tables)
                 {
-                    log.Info(string.Format("{0}", item));
+                    Console.WriteLine(string.Format("{0}", item));
                 }
             }
             else
             {
-                log.Info(result.error);
+                Console.WriteLine(result.error);
             }
         }
     }
