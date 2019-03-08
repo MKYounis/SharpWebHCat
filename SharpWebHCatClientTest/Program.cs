@@ -49,7 +49,7 @@ namespace SharpWebHCatClientTest
         public async void MapReduceStreamingJobTest()
         {
             MapReduceStreamingJob job = await hManager.MapReduceStreamingJob(
-                string.Empty,//"/tmp/test",
+                "/tmp/test",
                 "/tmp/output/1",
                 "/bin/cat",
                 "/usr/bin/wc -w",
