@@ -14,12 +14,6 @@
     <Compile Remove="WebHCatAPIReference\Request\Databases\DeleteDatabaseParam.cs" />
     <Compile Remove="WebHCatAPIReference\Response\HTable\PartitionCreate.cs" />
   </ItemGroup>
-    <ItemGroup>
-    <Content Include="SharpWebHCatClient.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>

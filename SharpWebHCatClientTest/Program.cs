@@ -16,7 +16,7 @@ namespace SharpWebHCatClientTest
     class Program
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(Program));
-        private static WebHCatRequestsManager hManager = new WebHCatRequestsManager();
+        private static WebHCatRequestsManager hManager = new WebHCatRequestsManager("http://webhcat:50111", "v1", "hive");
 
         static void Main(string[] args)
         {

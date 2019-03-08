@@ -17,12 +17,21 @@ namespace SharpHive.Managers
 {
     public sealed class WebHCatRequestsManager : WebHCatRequester
     {
-        public WebHCatRequestsManager() { }
+        private string _webHcatBaseUrl;
+        private string _webHCatVersion;
+        private string _webHCatUserName;
+        private RequestURL requestURL;
+        public WebHCatRequestsManager(string webHCatBaseUrl, string webHCatVersion, string webHCatUserName) {
+            _webHcatBaseUrl = webHCatBaseUrl;
+            _webHCatVersion = webHCatVersion;
+            _webHCatUserName = webHCatUserName;
+            requestURL = new RequestURL(_webHCatVersion, _webHCatUserName);
+        }
 
         public async Task<WebHCatStatus> GetConnectionStatus()
         {
 
-            WebHCatStatus webHCatStatus = await Get<WebHCatStatus>(RequestURL.GetStatus);
+            WebHCatStatus webHCatStatus = await Get<WebHCatStatus>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.GetStatus);
             return webHCatStatus;
         }
 
@@ -40,7 +49,7 @@ namespace SharpHive.Managers
 
             postParams.Add(exec);
 
-            HCatalogDDL hCatalogDDL = await Post<HCatalogDDL>(RequestURL.PostHCatalogDDL, postParams);
+            HCatalogDDL hCatalogDDL = await Post<HCatalogDDL>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.PostHCatalogDDL, postParams);
             return hCatalogDDL;
 
         }
@@ -49,14 +58,14 @@ namespace SharpHive.Managers
         public async Task<DatabasesList> GetDatabases()
         {
 
-            DatabasesList hDatabasesList = await Get<DatabasesList>(RequestURL.GetDatabasesList);
+            DatabasesList hDatabasesList = await Get<DatabasesList>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.GetDatabasesList);
             return hDatabasesList;
 
         }
 
         public async Task<DescribeDatabase> GetDatabase(string dbName)
         {
-            var describeDatabase = await Get<DescribeDatabase>(RequestURL.DescribeDatabase(dbName));
+            var describeDatabase = await Get<DescribeDatabase>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.DescribeDatabase(dbName));
             return describeDatabase;
         }
 
@@ -82,7 +91,7 @@ namespace SharpHive.Managers
                 location = location
             };
 
-            CreateDatabase createDatabase = await Put<CreateDatabase>(RequestURL.CreateDatabase(database), jsonParams);
+            CreateDatabase createDatabase = await Put<CreateDatabase>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.CreateDatabase(database), jsonParams);
             return createDatabase;
 
         }
@@ -100,7 +109,7 @@ namespace SharpHive.Managers
                 permissions = permissions
             };
 
-            DeleteDatabase deleteDatabase = await Delete<DeleteDatabase>(RequestURL.CreateDatabase(database), jsonParams);
+            DeleteDatabase deleteDatabase = await Delete<DeleteDatabase>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.CreateDatabase(database), jsonParams);
             return deleteDatabase;
 
         }
@@ -112,7 +121,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database))
                 throw new Exception("database is required.");
 
-            TableList tableList = await Get<TableList>(RequestURL.ListTables(database, like));
+            TableList tableList = await Get<TableList>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.ListTables(database, like));
             return tableList;
 
         }
@@ -124,7 +133,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(table))
                 throw new Exception("table is required.");
 
-            TableDescribe tableDescribe = await Get<TableDescribe>(RequestURL.DescribeTable(database, table, false));
+            TableDescribe tableDescribe = await Get<TableDescribe>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.DescribeTable(database, table, false));
             return tableDescribe;
 
         }
@@ -136,7 +145,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(table))
                 throw new Exception("table is required.");
 
-            TableDescribeExtended tableDescribeExtended = await Get<TableDescribeExtended>(RequestURL.DescribeTable(database, table, true));
+            TableDescribeExtended tableDescribeExtended = await Get<TableDescribeExtended>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.DescribeTable(database, table, true));
             return tableDescribeExtended;
 
         }
@@ -148,7 +157,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(table))
                 throw new Exception("table is required.");
 
-            TableCreate tableCreate = await Put<TableCreate>(RequestURL.CreateTable(database, table), hTable);
+            TableCreate tableCreate = await Put<TableCreate>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.CreateTable(database, table), hTable);
             return tableCreate;
 
         }
@@ -161,7 +170,7 @@ namespace SharpHive.Managers
 
             postParams.Add(rename);
 
-            TableDDL tableRename = await Post<TableDDL>(RequestURL.RenameTable(database, oldTableName), postParams);
+            TableDDL tableRename = await Post<TableDDL>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.RenameTable(database, oldTableName), postParams);
             return tableRename;
 
         }
@@ -178,7 +187,7 @@ namespace SharpHive.Managers
                 permissions = permissions
             };
 
-            TableDDL createTableLike = await Put<TableDDL>(RequestURL.CreateTableLike(database, tableName, newTableName), jsonParams);
+            TableDDL createTableLike = await Put<TableDDL>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.CreateTableLike(database, tableName, newTableName), jsonParams);
             return createTableLike;
 
         }
@@ -196,7 +205,7 @@ namespace SharpHive.Managers
                 permissions = permissions
             };
 
-            TableDDL deleteTable = await Delete<TableDDL>(RequestURL.DeleteTable(database, tableName), jsonParams);
+            TableDDL deleteTable = await Delete<TableDDL>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.DeleteTable(database, tableName), jsonParams);
             return deleteTable;
         }
 
@@ -206,7 +215,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database) || string.IsNullOrEmpty(tableName))
                 throw new Exception("database and table are required.");
 
-            TablePartitionsList tablePartitionsList = await Get<TablePartitionsList>(RequestURL.ListTablePartitions(database, tableName));
+            TablePartitionsList tablePartitionsList = await Get<TablePartitionsList>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.ListTablePartitions(database, tableName));
             return tablePartitionsList;
 
         }
@@ -222,7 +231,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database) || string.IsNullOrEmpty(tableName))
                 throw new Exception("database and table are required.");
 
-            PartitionDescribe partitionDescribe = await Get<PartitionDescribe>(RequestURL.DescribeTablePartition(database, tableName, partitionName));
+            PartitionDescribe partitionDescribe = await Get<PartitionDescribe>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.DescribeTablePartition(database, tableName, partitionName));
             return partitionDescribe;
 
         }
@@ -240,7 +249,7 @@ namespace SharpHive.Managers
                 location = location
             };
 
-            PartitionDDL createPartition = await Put<PartitionDDL>(RequestURL.CreateTablePartition(database, tableName, partitionName), jsonParams);
+            PartitionDDL createPartition = await Put<PartitionDDL>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.CreateTablePartition(database, tableName, partitionName), jsonParams);
             return createPartition;
         }
 
@@ -256,7 +265,7 @@ namespace SharpHive.Managers
                 permissions = permissions
             };
 
-            PartitionDDL deleteTablePartition = await Delete<PartitionDDL>(RequestURL.DeleteTablePartition(database, tableName, partitionName), jsonParams);
+            PartitionDDL deleteTablePartition = await Delete<PartitionDDL>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.DeleteTablePartition(database, tableName, partitionName), jsonParams);
             return deleteTablePartition;
         }
 
@@ -267,7 +276,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database) || string.IsNullOrEmpty(tableName))
                 throw new Exception("database and table are required.");
 
-            TableColumnsList tableColumnsList = await Get<TableColumnsList>(RequestURL.ListTableColumns(database, tableName));
+            TableColumnsList tableColumnsList = await Get<TableColumnsList>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.ListTableColumns(database, tableName));
             return tableColumnsList;
         }
 
@@ -276,7 +285,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database) || string.IsNullOrEmpty(tableName) || string.IsNullOrEmpty(columnName))
                 throw new Exception("database, table and column are required.");
 
-            ColumnDescribe columnDescribe = await Get<ColumnDescribe>(RequestURL.DescribeTableColumn(database, tableName, columnName));
+            ColumnDescribe columnDescribe = await Get<ColumnDescribe>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.DescribeTableColumn(database, tableName, columnName));
             return columnDescribe;
         }
 
@@ -289,7 +298,7 @@ namespace SharpHive.Managers
             createParams.type = column.type;
             createParams.comment = column.comment;
 
-            TableColumnDDL createColumn = await Put<TableColumnDDL>(RequestURL.CreateTableColumn(database, tableName, column.name), createParams);
+            TableColumnDDL createColumn = await Put<TableColumnDDL>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.CreateTableColumn(database, tableName, column.name), createParams);
             return createColumn;
         }
         #endregion
@@ -299,7 +308,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database) || string.IsNullOrEmpty(tableName))
                 throw new Exception("database and table are required.");
 
-            TableProperties tableProperties = await Get<TableProperties>(RequestURL.ListTableProperties(database, tableName));
+            TableProperties tableProperties = await Get<TableProperties>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.ListTableProperties(database, tableName));
             return tableProperties;
         }
 
@@ -308,7 +317,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database) || string.IsNullOrEmpty(tableName) || string.IsNullOrEmpty(propertyName))
                 throw new Exception("database, table and property are required.");
 
-            TableProperty tableProperty = await Get<TableProperty>(RequestURL.GetTableProperty(database, tableName, propertyName));
+            TableProperty tableProperty = await Get<TableProperty>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.GetTableProperty(database, tableName, propertyName));
             return tableProperty;
         }
 
@@ -317,7 +326,7 @@ namespace SharpHive.Managers
             if (string.IsNullOrEmpty(database) || string.IsNullOrEmpty(tableName) || string.IsNullOrEmpty(propertyName))
                 throw new Exception("database, table and property are required.");
 
-            TableProperty createProperty = await Put<TableProperty>(RequestURL.CreateTableProperty(database, tableName, propertyName), propertyValue);
+            TableProperty createProperty = await Put<TableProperty>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.CreateTableProperty(database, tableName, propertyName), propertyValue);
             return createProperty;
         }
         #endregion
@@ -372,7 +381,7 @@ namespace SharpHive.Managers
             if (!string.IsNullOrEmpty(callBack))
                 postParams.Add(new KeyValuePair<string, string>("callBack", callBack));
 
-            MapReduceStreamingJob tableRename = await Post<MapReduceStreamingJob>(RequestURL.MapReduceStreamingJob(), postParams);
+            MapReduceStreamingJob tableRename = await Post<MapReduceStreamingJob>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.MapReduceStreamingJob(), postParams);
             return tableRename;
         }
 
@@ -424,7 +433,7 @@ namespace SharpHive.Managers
             if (!string.IsNullOrEmpty(usehcatalog))
                 postParams.Add(new KeyValuePair<string, string>("usehcatalog", usehcatalog));
 
-            Job tableRename = await Post<Job>(RequestURL.MapReduceJob(), postParams);
+            Job tableRename = await Post<Job>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.MapReduceJob(), postParams);
             return tableRename;
         }
         #endregion
@@ -471,7 +480,7 @@ namespace SharpHive.Managers
             if (!string.IsNullOrEmpty(usehcatalog))
                 postParams.Add(new KeyValuePair<string, string>("usehcatalog", usehcatalog));
 
-            Job tableRename = await Post<Job>(RequestURL.PigJob(), postParams);
+            Job tableRename = await Post<Job>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.PigJob(), postParams);
             return tableRename;
         }
 
@@ -513,7 +522,7 @@ namespace SharpHive.Managers
             if (!string.IsNullOrEmpty(callBack))
                 postParams.Add(new KeyValuePair<string, string>("callBack", callBack));
 
-            Job tableRename = await Post<Job>(RequestURL.HiveJob(), postParams);
+            Job tableRename = await Post<Job>(_webHcatBaseUrl, _webHCatVersion, _webHCatUserName, requestURL.HiveJob(), postParams);
             return tableRename;
         }
 
