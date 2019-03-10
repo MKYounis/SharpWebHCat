@@ -9,5 +9,6 @@ namespace SharpHive.Models.WebHCat.WebHCatAPIReference.Request.HTable
         public List<Column> columns { get; set; }
         public List<PartitionedBy> partitionedBy { get; set; }
         public Format format { get; set; }
+        public dynamic tableProperties { get; set; }
     }
 }
